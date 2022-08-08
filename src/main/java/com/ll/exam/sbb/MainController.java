@@ -3,6 +3,10 @@ package com.ll.exam.sbb;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 @Controller
 public class MainController {
 
@@ -72,6 +76,26 @@ public class MainController {
         return """
                 <h1>%d</h1>
                 """.formatted(increaseValue);
+    }
+
+    @GetMapping("/gugudan")
+    @ResponseBody
+    public String multiPly(int num, int limit) {
+
+        return IntStream.rangeClosed(1, limit)
+                .mapToObj(i -> "%d * %d = %d".formatted(num, i, num * i))
+                .collect(Collectors.joining("<br>"));
+    }
+
+    @GetMapping("/mbti/{name}")
+    @ResponseBody
+    public String mbti(@PathVariable String name){
+        String rs = switch ( name ) {
+            case "홍길동" -> "INFP";
+            default -> "알수없음";
+        };
+
+        return rs;
     }
 
 }
