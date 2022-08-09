@@ -151,7 +151,7 @@ public class MainController {
                 .stream()
                 .filter(a -> a.getId() == id)
                 .findFirst()
-                .get();
+                .orElse(null);
 
         if(article == null){
             return "%d 번 게시물은 존재하지 않습니다.".formatted(id);
