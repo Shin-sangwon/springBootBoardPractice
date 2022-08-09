@@ -176,7 +176,7 @@ public class MainController {
         return "%d번 게시물이 삭제되었습니다.".formatted(id);
     }
 
-    @GetMapping("/addPerson")
+    @GetMapping("/addPerson/{id}")
     @ResponseBody
     public Person addPerson(Person p) {
         return p;
