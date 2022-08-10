@@ -21,6 +21,6 @@ public class Answer {
     @CreatedDate
     private LocalDateTime createDate;
 
-    @ManyToOne
+    @ManyToOne // Answer 클래스가 Many, Question이 One
     private Question question;
 }

@@ -22,6 +22,6 @@ public class Question {
 
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE) // 이 클래스가 One, Many는 Answer
     private List<Answer> answerList;
 }
