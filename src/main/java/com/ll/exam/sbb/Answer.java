@@ -22,5 +22,6 @@ public class Answer {
     private LocalDateTime createDate;
 
     @ManyToOne // Answer 클래스가 Many, Question이 One
+    @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Question question;
 }
