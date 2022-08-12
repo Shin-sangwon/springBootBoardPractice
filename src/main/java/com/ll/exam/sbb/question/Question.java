@@ -1,5 +1,6 @@
-package com.ll.exam.sbb;
+package com.ll.exam.sbb.question;
 
+import com.ll.exam.sbb.answer.Answer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,6 @@ public class Question {
     private String content;
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Answer> answerList;
 }
