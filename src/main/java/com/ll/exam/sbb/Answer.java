@@ -2,7 +2,6 @@ package com.ll.exam.sbb;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,10 +17,8 @@ public class Answer {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @CreatedDate
     private LocalDateTime createDate;
 
-    @ManyToOne // Answer 클래스가 Many, Question이 One
-    @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @ManyToOne
     private Question question;
 }

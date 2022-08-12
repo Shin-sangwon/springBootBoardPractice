@@ -1,7 +1,5 @@
 package com.ll.exam.sbb;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,30 +13,26 @@ public class AnswerRepositoryTest {
     private QuestionRepository questionRepository;
     @Autowired
     private AnswerRepository answerRepository;
+    private int lastSampleDataId;
 
     @BeforeEach
-    public void posts_save(){
-        Question q1 = new Question();
-        q1.setSubject("Q1 Subject");
-        q1.setContent(("Q1 Content"));
-        q1.setCreateDate(LocalDateTime.now());
-        this.questionRepository.save(q1);
-
-        Question q2 = new Question();
-        q2.setSubject("Q2 Subject");
-        q2.setContent(("Q2 Content"));
-        q2.setCreateDate(LocalDateTime.now());
-        this.questionRepository.save(q2);
+    void beforeEach() {
+        clearData();
+        createSampleData();
     }
 
-    @AfterEach
-    public void tearDown(){
-        questionRepository.truncateQuestion();
-        answerRepository.truncateAnswer();
+    private void clearData() {
+        QuestionRepositoryTest.clearData(questionRepository);
+
+        answerRepository.truncateTable();
+    }
+
+    private void createSampleData() {
+        QuestionRepositoryTest.createSampleData(questionRepository);
     }
 
     @Test
-    void Answer_저장된다() {
+    void 저장() {
         Question q = questionRepository.findById(2).get();
 
         Answer a = new Answer();
@@ -46,7 +40,5 @@ public class AnswerRepositoryTest {
         a.setQuestion(q);
         a.setCreateDate(LocalDateTime.now());
         answerRepository.save(a);
-
     }
-
 }

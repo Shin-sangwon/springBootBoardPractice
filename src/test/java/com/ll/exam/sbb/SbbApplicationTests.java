@@ -35,7 +35,7 @@ class SbbApplicationTests {
 
 	@AfterEach
 	public void tearDown(){
-		questionRepository.truncateQuestion();
+		//questionRepository.truncateQuestion();
 	}
 
 	@Test

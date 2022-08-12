@@ -1,94 +1,121 @@
 package com.ll.exam.sbb;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-import org.junit.jupiter.api.*;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-class QuestionRepositoryTest {
-
+public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
+    private static int lastSampleDataId;
 
     @BeforeEach
-    public void posts_save(){
+    void beforeEach() {
+        clearData();
+        createSampleData();
+    }
+
+    public static int createSampleData(QuestionRepository questionRepository) {
         Question q1 = new Question();
-        q1.setSubject("Q1 Subject");
-        q1.setContent(("Q1 Content"));
+        q1.setSubject("sbb가 무엇인가요?");
+        q1.setContent("sbb에 대해서 알고 싶습니다.");
         q1.setCreateDate(LocalDateTime.now());
-        this.questionRepository.save(q1);
+        questionRepository.save(q1);
 
         Question q2 = new Question();
-        q2.setSubject("Q2 Subject");
-        q2.setContent(("Q2 Content"));
+        q2.setSubject("스프링부트 모델 질문입니다.");
+        q2.setContent("id는 자동으로 생성되나요?");
         q2.setCreateDate(LocalDateTime.now());
-        this.questionRepository.save(q2);
+        questionRepository.save(q2);
+
+        return q2.getId();
     }
 
-    @AfterEach
-    public void tearDown(){
-        questionRepository.truncateQuestion();
+    private void createSampleData() {
+        lastSampleDataId = createSampleData(questionRepository);
+    }
+
+    public static void clearData(QuestionRepository questionRepository) {
+        questionRepository.truncateTable();
+    }
+
+    private void clearData() {
+        clearData(questionRepository);
     }
 
     @Test
-    void Question_저장된다() {
-        List<Question> allPost = questionRepository.findAll();
-        assertEquals(allPost.size(), 2);
+    void 저장() {
+        Question q1 = new Question();
+        q1.setSubject("sbb가 무엇인가요?");
+        q1.setContent("sbb에 대해서 알고 싶습니다.");
+        q1.setCreateDate(LocalDateTime.now());
+        questionRepository.save(q1);
 
-        Question q = allPost.get(0);
-        assertEquals("Q1 Content", q.getContent());
+        Question q2 = new Question();
+        q2.setSubject("스프링부트 모델 질문입니다.");
+        q2.setContent("id는 자동으로 생성되나요?");
+        q2.setCreateDate(LocalDateTime.now());
+        questionRepository.save(q2);
 
+        assertThat(q1.getId()).isEqualTo(lastSampleDataId + 1);
+        assertThat(q2.getId()).isEqualTo(lastSampleDataId + 2);
     }
+
     @Test
-    void Question_삭제된다() {
-        assertEquals(2, this.questionRepository.count());
-        Optional<Question> oq = this.questionRepository.findById(2);
-        Question q = oq.get();
+    void 삭제() {
+        assertThat(questionRepository.count()).isEqualTo(lastSampleDataId);
+
+        Question q = this.questionRepository.findById(1).get();
         questionRepository.delete(q);
-        assertEquals(1, this.questionRepository.count());
+
+        assertThat(questionRepository.count()).isEqualTo(lastSampleDataId - 1);
     }
 
     @Test
-    void Question_수정된다() {
-        Optional<Question> oq = this.questionRepository.findById(1);
-        Question q = oq.get();
-        q.setContent("modify content");
-        this.questionRepository.save(q);
+    void 수정() {
+        Question q = this.questionRepository.findById(1).get();
+        q.setSubject("수정된 제목");
+        questionRepository.save(q);
 
+        q = this.questionRepository.findById(1).get();
+
+        assertThat(q.getSubject()).isEqualTo("수정된 제목");
+    }
+
+    @Test
+    void findAll() {
+        List<Question> all = questionRepository.findAll();
+        assertThat(all.size()).isEqualTo(lastSampleDataId);
+
+        Question q = all.get(0);
+        assertThat(q.getSubject()).isEqualTo("sbb가 무엇인가요?");
     }
 
     @Test
     void findBySubject() {
-        Question q = questionRepository.findBySubject("Q1 Subject");
-
-        assertEquals(1, q.getId());
+        Question q = questionRepository.findBySubject("sbb가 무엇인가요?");
+        assertThat(q.getId()).isEqualTo(1);
     }
 
     @Test
     void findBySubjectAndContent() {
-        Question q = questionRepository.findBySubjectAndContent("Q1 Subject", "Q1 Content");
-
-        assertEquals(1, q.getId());
+        Question q = questionRepository.findBySubjectAndContent(
+                "sbb가 무엇인가요?", "sbb에 대해서 알고 싶습니다.");
+        assertThat(q.getId()).isEqualTo(1);
     }
 
     @Test
     void findBySubjectLike() {
-        List<Question> qList = this.questionRepository.findBySubjectLike("Q1%");
-
+        List<Question> qList = questionRepository.findBySubjectLike("sbb%");
         Question q = qList.get(0);
 
-        assertEquals("Q1 Subject", q.getSubject());
-
+        assertThat(q.getSubject()).isEqualTo("sbb가 무엇인가요?");
     }
-
-
-
 }
